@@ -13,16 +13,16 @@ if(!empty($_POST['myRadio'])){
     $row = $value / $_SESSION["size"];
     $coll = $value % $_SESSION["size"];
    
-    $_SESSION['valueArray'][intval($row, 10)][$coll] = 1;
-
-
+    $_SESSION['valueArray'][floor($row)][floor($coll)] = 1;
+    
     do{
-        if($_SESSION['valueArray'][$rand1 = rand(0, $_SESSION["size"]-1)][$rand2 = rand(0, $_SESSION["size"]-1)] != 1){
-            echo $rand1;
-            echo $rand2;
+        $rand1 = rand(0, $_SESSION["size"]-1);
+        $rand2 = rand(0, $_SESSION["size"]-1);
+        if($_SESSION['valueArray'][$rand1][$rand2] != 1 &&
+        $_SESSION['valueArray'][$rand1][$rand2] != 2){
             $_SESSION['valueArray'][$rand1][$rand2] = 2;
-        }
-        break;
+            break;
+        }            
     }
     while(true);
 }
@@ -34,7 +34,6 @@ if(!empty($_POST['myRadio'])){
     <body>
         <?php           
             function myTable(){
-                $index = 0;
                 echo "<table>";
                 for($i = 0; $i < $_SESSION["size"]; $i++){
                     echo "<tr>";
@@ -43,19 +42,25 @@ if(!empty($_POST['myRadio'])){
                         if($_SESSION['valueArray'][$i][$j] === 1){
                             echo "X";
                         }
-                        elseif($_SESSION['valueArray'][$i][$j] === 2){
+                        if($_SESSION['valueArray'][$i][$j] === 2){
                             echo "O";
                         }
-                        else{
-                            echo "<input type = 'radio' name = 'myRadio' value = '" . $index + 1 . "'>";
-                            $index++;
-                        }                       
+                        if($_SESSION['valueArray'][$i][$j] === 0){
+                            echo "<input type = 'radio' name = 'myRadio' value = '" . $i * $_SESSION['size'] + $j + 1 . "'>";                         
+                        }                 
                         echo "</td>";
                     }
                     echo "</tr>";
                 }
                 echo "</table>";  
-            }                            
+                $toright = true;
+                for($i = 0; $i < $_SESSION['size']; $i++){
+                    $toright &= ($_SESSION['valueArray'][$i][$i] === 1);
+                }
+                if ($toright){
+                    
+                }
+            }                      
         ?>    
         <div>
             <form action = 'index.php' method='POST'>  
